@@ -1,0 +1,522 @@
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <vector>
+#include <windows.h>
+
+using namespace std;
+
+class Persoana
+{
+protected:
+    int id;                                                                 //membri protected
+    string nume;
+public:                                                                      //membri public
+    Persoana (int, string);                                               //constructor initializare
+    Persoana (const Persoana&);                                              //constructor copiere
+    virtual ~Persoana();                                                     //destructor virtual
+
+    virtual void citire(istream &in);                                        //functie virtuala citire
+    virtual void afisare(ostream &out);                                      //functie virtuala afisare
+
+    friend istream& operator>>(istream&, Persoana&);                         //supraincarcare >>
+    friend ostream& operator<<(ostream&, Persoana&);                         //supraincarcare <<
+
+    friend class Agenda;
+
+    Persoana& operator=(const Persoana&);
+};
+Persoana::Persoana (int x=0,string num="")
+{
+    id=x;
+    nume=num;
+
+}
+Persoana::Persoana (const Persoana &p)
+{
+    this->id=p.id;
+    this->nume=p.nume;
+}
+Persoana::~Persoana()
+{
+    this->id=0;
+    this->nume="\0";
+}
+void Persoana::citire(istream &in)
+{
+    int x;
+    cout<<"ID(numar): ";
+    in>>x;
+    id=x;
+
+    cout<<"Nume: ";
+    string z;
+    in>>z;
+    nume=z;
+}
+void Persoana::afisare(ostream &out)
+{
+    out<<"\nID: "<<id<<"\n";
+    out<<"Nume: "<<nume<<"\n";
+}
+istream& operator>>(istream& in,Persoana& p)
+{
+    p.citire(in);
+    return in;
+}
+
+ostream& operator<<(ostream& out, Persoana& p)
+{
+    p.afisare(out);
+    return out;
+}
+
+Persoana& Persoana::operator=(const Persoana& p){
+    this->id = p.id;
+    this->nume = p.nume;
+
+    return *this;
+}
+
+
+
+class Abonat:public Persoana
+{
+protected:
+    string nr_telefon;
+public:
+    Abonat(int, string, string);                                  //constructor initializare
+    Abonat(const Abonat&);                                                  //constructor copiere
+    ~Abonat();                                                              //destructor
+
+    virtual void citire(istream &in);                                       //functie citire
+    virtual void afisare(ostream &out);                                     //functie afisare
+
+    friend istream& operator>>(istream&, Abonat&);                          //supraincarcare >>
+    friend ostream& operator<<(ostream&, Abonat&);                          //supraincarcare <<
+
+    Abonat& operator=(const Abonat&);
+
+};
+Abonat::Abonat(int x=0,string num="",string nr_tel=""):Persoana(x,num){
+    nr_telefon=nr_tel;
+}
+Abonat::Abonat(const Abonat &a):Persoana(a)
+{
+    this->nr_telefon=a.nr_telefon;
+}
+Abonat::~Abonat()
+{
+    this->nr_telefon="\0";
+}
+void Abonat::citire(istream &in){
+    Persoana::citire(in);
+    string nr_tel;
+
+   e:
+        cout<<"Numar de telefon: ";
+    in>>nr_tel;
+
+    try
+    {
+        if(nr_tel.size()!=10)
+            throw 1;
+    }
+    catch (int i)
+    {
+        cout<<"\n Eroare, numarul de telefon trebuie sa aiba 10 cifre!\n";
+        goto e;
+    }
+
+    nr_telefon=nr_tel;
+}
+void Abonat::afisare(ostream &out){
+    Persoana::afisare(out);
+    out<<"Numar de telefon: ";
+    out<<nr_telefon<<"\n";
+}
+istream& operator>>(istream& in,Abonat& a){
+    a.citire(in);
+    return in;
+}
+
+ostream& operator<<(ostream& out, Abonat& a){
+    a.afisare(out);
+    return out;
+}
+Abonat& Abonat::operator=(const Abonat& a){
+    Persoana::operator=(a);
+    nr_telefon = a.nr_telefon;
+
+    return *this;}
+
+
+class Abonat_Skype: public Abonat
+{protected:
+    string id_skype;
+public:
+    Abonat_Skype(int, string, string,string);                                  //constructor initializare
+    Abonat_Skype(const Abonat_Skype&);                                                  //constructor copiere
+    ~Abonat_Skype();                                                              //destructor
+
+    virtual void citire(istream &in);                                       //functie citire
+    virtual void afisare(ostream &out);                                     //functie afisare
+
+    friend istream& operator>>(istream&, Abonat_Skype&);                          //supraincarcare >>
+    friend ostream& operator<<(ostream&, Abonat_Skype&);                          //supraincarcare <<
+
+    Abonat_Skype& operator=(const Abonat_Skype&);
+
+};
+Abonat_Skype::Abonat_Skype(int x=0,string num="",string nr="", string id_s=""):Abonat(x,num,nr){
+    id_skype=id_s;
+}
+Abonat_Skype::Abonat_Skype(const Abonat_Skype &as):Abonat(as)
+{
+    this->id_skype=as.id_skype;
+}
+Abonat_Skype::~Abonat_Skype()
+{
+    this->id_skype="\0";
+}
+void Abonat_Skype::citire(istream &in){
+    Abonat::citire(in);
+    string id_s;
+    cout<<"ID Skype: ";
+    in>>id_s;
+
+    id_skype=id_s;
+}
+void Abonat_Skype::afisare(ostream &out){
+    Abonat::afisare(out);
+    out<<"ID Skype: ";
+    out<<id_skype<<"\n";
+}
+istream& operator>>(istream& in,Abonat_Skype& as){
+    as.citire(in);
+    return in;
+}
+
+ostream& operator<<(ostream& out, Abonat_Skype& as){
+    as.afisare(out);
+    return out;
+}
+Abonat_Skype& Abonat_Skype::operator=(const Abonat_Skype& as){
+    Abonat::operator=(as);
+    id_skype = as.id_skype;
+
+    return *this;}
+
+class Abonat_Skype_Romania: public Abonat_Skype
+{private:
+    string adresa_mail;
+public:
+    Abonat_Skype_Romania(int, string, string,string,string);                                  //constructor initializare
+    Abonat_Skype_Romania(const Abonat_Skype_Romania&);                                                  //constructor copiere
+    ~Abonat_Skype_Romania();                                                              //destructor
+
+    void citire(istream &in);                                       //functie citire
+    void afisare(ostream &out);                                     //functie afisare
+
+    friend istream& operator>>(istream&, Abonat_Skype_Romania&);                          //supraincarcare >>
+    friend ostream& operator<<(ostream&, Abonat_Skype_Romania&);                          //supraincarcare <<
+
+    Abonat_Skype_Romania& operator=(const Abonat_Skype_Romania&);
+
+};
+Abonat_Skype_Romania::Abonat_Skype_Romania(int x=0,string num="",string nr="", string id_s="", string adresa=""):Abonat_Skype(x,num,nr,id_s){
+    adresa_mail=adresa;
+}
+Abonat_Skype_Romania::Abonat_Skype_Romania(const Abonat_Skype_Romania &asr):Abonat_Skype(asr)
+{
+    this->adresa_mail=asr.adresa_mail;
+}
+Abonat_Skype_Romania::~Abonat_Skype_Romania()
+{
+    this->adresa_mail="\0";
+}
+void Abonat_Skype_Romania::citire(istream &in){
+    Abonat_Skype::citire(in);
+    string adresa;
+    cout<<"Adresa email: ";
+    in>>adresa;
+
+    adresa_mail=adresa;
+}
+void Abonat_Skype_Romania::afisare(ostream &out){
+    Abonat_Skype::afisare(out);
+    out<<"Adresa mail: ";
+    out<<adresa_mail<<"\n";
+}
+istream& operator>>(istream& in,Abonat_Skype_Romania& asr){
+    asr.citire(in);
+    return in;
+}
+
+ostream& operator<<(ostream& out, Abonat_Skype_Romania& asr){
+    asr.afisare(out);
+    return out;
+}
+Abonat_Skype_Romania& Abonat_Skype_Romania::operator=(const Abonat_Skype_Romania& asr){
+    Abonat_Skype::operator=(asr);
+    adresa_mail = asr.adresa_mail;
+
+    return *this;}
+
+class Abonat_Skype_Extern: public Abonat_Skype
+{private:
+    string tara;
+public:
+    Abonat_Skype_Extern(int, string, string,string,string);                                  //constructor initializare
+    Abonat_Skype_Extern(const Abonat_Skype_Extern&);                                                  //constructor copiere
+    ~Abonat_Skype_Extern();                                                              //destructor
+
+    void citire(istream &in);                                       //functie citire
+    void afisare(ostream &out);                                     //functie afisare
+
+    friend istream& operator>>(istream&, Abonat_Skype_Extern&);                          //supraincarcare >>
+    friend ostream& operator<<(ostream&, Abonat_Skype_Extern&);                          //supraincarcare <<
+
+    Abonat_Skype_Extern& operator=(const Abonat_Skype_Extern&);
+
+};
+Abonat_Skype_Extern::Abonat_Skype_Extern(int x=0,string num="",string nr="", string id_s="", string ta=""):Abonat_Skype(x,num,nr,id_s){
+    tara=ta;
+}
+Abonat_Skype_Extern::Abonat_Skype_Extern(const Abonat_Skype_Extern &ase):Abonat_Skype(ase)
+{
+    this->tara=ase.tara;
+}
+Abonat_Skype_Extern::~Abonat_Skype_Extern()
+{
+    this->tara="\0";
+}
+void Abonat_Skype_Extern::citire(istream &in){
+    Abonat_Skype::citire(in);
+    string ta;
+    cout<<"Tara: ";
+    in>>ta;
+
+    tara=ta;
+}
+void Abonat_Skype_Extern::afisare(ostream &out){
+    Abonat_Skype::afisare(out);
+    out<<"Tara: ";
+    out<<tara<<"\n";
+}
+istream& operator>>(istream& in,Abonat_Skype_Extern& ase){
+    ase.citire(in);
+    return in;
+}
+
+ostream& operator<<(ostream& out, Abonat_Skype_Extern& ase){
+    ase.afisare(out);
+    return out;
+}
+Abonat_Skype_Extern& Abonat_Skype_Extern::operator=(const Abonat_Skype_Extern& ase){
+    Abonat_Skype::operator=(ase);
+    tara = ase.tara;
+
+    return *this;}
+
+
+
+
+class Agenda
+{private:
+    vector<Persoana*> abonati;
+ public:
+    Agenda(vector<Persoana*>);                                                         //constructor initializare
+    Agenda(Agenda&);                                                                  //constructor copiere
+    ~Agenda();                                                                        //destructor
+
+    void citire(istream &in);                                                         //functie citire
+    void afisare(ostream &out);                                                       //functie afisare
+
+    friend istream& operator>>(istream&, Agenda&);                                    //supraincarcare >>
+    friend ostream& operator<<(ostream&, Agenda&);                                    //supraincarcare <<
+    Agenda& operator=(const Agenda&);
+    Agenda& cautare_nume(string);
+    void add_abonat(Persoana *a)
+        {
+            abonati.push_back(a);
+        }
+    friend class Persoana;
+    friend class Abonat;
+    string get_nume(Persoana* p)
+    {
+        return p->nume;
+    }
+
+};
+Agenda::Agenda(vector<Persoana*> a = {})
+{
+    abonati=a;
+}
+Agenda::Agenda(Agenda &d)
+{
+    this->abonati=d.abonati;
+}
+Agenda::~Agenda()
+{
+    this->abonati={};
+}
+
+void Agenda::citire(istream &in){
+
+    int tip,numar;
+    cout<<"\nCare este numarul de persoane pe care doriti sa il adaugati in agenda? ";
+    in>>numar;
+
+        for(int i=0;i<numar;i++)
+            {
+           e2:
+            system("cls");
+            cout<<"\n Alegeti ce va fi persoana "<<i+1<<" : \n 1. Persoana \n 2. Abonat \n 3. Abonat Skype \n 4. Abonat Skype din Romania \n 5. Abonat Skype Extern\n ";
+            cout<<"Tip persoana "<<i+1<<" : "; in>> tip;
+            Persoana *a;
+            if (tip<1 || tip >5)
+            {
+                cout<<"\n Alegeti un numar intre 1 si 5!\n";
+                goto e2;
+            }
+            if (tip==1)
+                {
+                a = new Persoana;
+                in>>*a;
+                }
+            if (tip==2)
+                {
+                a = new Abonat;
+                in>>*a;
+                }
+            if (tip==3)
+                {
+                a = new Abonat_Skype;
+                in>>*a;
+                }
+            if (tip==4)
+                {
+                a = new Abonat_Skype_Romania;
+                in>>*a;
+                }
+            if (tip==5)
+                {
+                a = new Abonat_Skype_Extern;
+                in>>*a;
+                }
+                abonati.push_back(a);
+            }
+
+}
+void Agenda::afisare(ostream &out)
+{
+
+    vector<Persoana*>::iterator iter=abonati.begin();
+    vector<Persoana*>::iterator x=abonati.end();
+    for(; iter != x; iter++)
+        out<<**iter;
+
+}
+Agenda& Agenda::cautare_nume(string i)
+{
+    int verif=0;
+    vector<Persoana*>::iterator iter=abonati.begin();
+    vector<Persoana*>::iterator x=abonati.end();
+    for(; iter != x; iter++)
+        if(i==get_nume(*iter))
+            {cout<<**iter;
+            verif=1;}
+     if (verif==0)
+            cout<<"Nu exista nici o persoana cu acest nume in Angenda!";
+
+}
+
+istream& operator>>(istream& in,Agenda& d)
+{
+    d.citire(in);
+    return in;
+}
+ostream& operator<<(ostream& out, Agenda& d)
+{
+    d.afisare(out);
+    return out;
+}
+Agenda& Agenda::operator=(const Agenda& d){
+    this->abonati = d.abonati;
+    return *this;}
+
+
+
+
+void menu_out()
+{
+    cout<<"\n\t MENIU: \n \n";
+    cout<<"1. Adaugati persoane in Agenda \n";
+    cout<<"2. Afisati toate persoanele din Agenda\n";
+    cout<<"3. Afisati datele unei persoane in functie de nume (cautare dupa nume)\n";
+    cout<<"4. Stergeti Agenda\n";
+    cout<<"0. Iesire.\n";
+}
+void menu()
+{
+    int option;
+    option=0;
+    Agenda Agendaa;
+    int nr,exista=0;
+    do
+    {
+        menu_out();
+
+        cout<<"\nIntroduceti numarul actiunii: ";
+        cin>>option;
+
+        if (option==1)
+        {
+            exista=1;
+            cin>>Agendaa;
+        }
+        if (option==2)
+        {
+            if(exista==1)
+                cout<<Agendaa;
+            else
+                cout<<"\nNu exista nici o persoana in Agenda!\n";
+        }
+        if (option==3)
+        {
+            if(exista==1)
+            {
+            string nume_cautat;
+            cout<<"Introduceti numele persoanei pe care vreti sa o cautati:  ";
+            cin>>nume_cautat;
+            Agendaa.cautare_nume(nume_cautat);
+            }
+            else
+                cout<<"\nNu exista nici o persoana in Agenda!\n";
+        }
+        if(option==4)
+        {
+            Agendaa.~Agenda();
+            exista=0;
+            cout<<"\nAgenda a fost stearsa!\n";
+        }
+        if (option==0)
+        {
+            printf("\nEXIT!\n");
+        }
+        if (option<0||option>4)
+        {
+            printf("\nSelectie invalida\n");
+        }
+        printf("\n");
+        system("pause");
+        system("cls");
+    }
+    while(option!=0);
+}
+int main()
+{
+    menu();
+    return 0;
+}
